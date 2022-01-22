@@ -1,0 +1,5 @@
+Django
+djangorestframework
+mysqlclient
+django-mysql
+psycopg2>=2.8
