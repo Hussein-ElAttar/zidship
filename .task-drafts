@@ -1,0 +1,68 @@
+- Rest framework
+- Authentication
+- Unified Interface + Use Strategy Pattern
+- Real Integration (Fedex, DHL)
+- Documentation
+- Permissions
+- Testing
+
+
+Drafts:
+
+Models Draft
+===========================================================================
+Couriers:
+    id, name, description,
+
+CourierCredentials:
+    id, courier, client_id, client_secret,
+    token, refresh_token, expiration_date
+    base_url, api_url, token_path, auth_flow, scope
+
+Shipments:
+    id, courier, status, tracking_id, timestamps,
+    weight, weight_unit
+    height, width, length, dimensions_unit
+    sender_address, sender_country, sender_city
+    sender_postal_code, sender_phone_number
+    receiver_address, receiver_country, receiver_city
+    receiver_postal_code, receiver_phone_number
+    package_type, pickup_date, estimated_delivery_date
+
+ShipmentMethods
+    id, Courier, status(Pending, In-Progress, Delivered, Canceled) 
+    description, source_id, source_description??,
+
+ShipmentStatuses 
+    id, Courier, description
+
+ShipmentStatusesMappings
+    id, ShipmentStatus, Courier, source_id
+
+Service Interfaces Draft
+===========================================================================
+OAuth2:
+    - CourierCredentials
+
+    get_credentials()
+    authenticate()
+    handle_refresh()
+
+ShipmentGateway:
+    - Courier
+    - Shipment
+
+    create_waybill() -> Shipment
+    print_waybill() -> PDF File
+    track_shipment() -> Shipment
+    cancel_shipment() -> Boolean?
+
+ShipmentTrackingDetails:
+    - tracking_id
+    - currently_at
+    - estimated_delivery
+    - status
+
+
+Service Classes Draft
+===========================================================================
