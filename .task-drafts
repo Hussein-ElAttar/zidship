@@ -30,14 +30,11 @@ Shipments:
     package_type, pickup_date, estimated_delivery_date
 
 ShipmentMethods
-    id, Courier, status(Pending, In-Progress, Delivered, Canceled) 
+    id, Courier, 
     description, source_id, source_description??,
 
 ShipmentStatuses 
-    id, Courier, description
-
-ShipmentStatusesMappings
-    id, ShipmentStatus, Courier, source_id
+    id, Courier, description, status(Pending, In-Progress, Delivered, Canceled) , Courier, source_id
 
 Service Interfaces Draft
 ===========================================================================

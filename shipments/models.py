@@ -1,3 +1,4 @@
+from core.models import TimestampedModel
 from django.db import models
 
 from shipments.enums import DimensionUnits, ShipmentStatus, WeightUnits
@@ -8,12 +9,10 @@ class Courier(models.Model):
     description = models.TextField(blank=True)
 
 
-class Shipment(models.Model):
+class Shipment(TimestampedModel):
     courier = models.ForeignKey('shipments.courier', on_delete=models.CASCADE, related_name="%(class)s_courier")
     status = models.ForeignKey('shipments.shipmentStatus', on_delete=models.CASCADE, related_name="%(class)s_courier")
     tracking_id = models.CharField(null=True, max_length=200)
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now=True)
     weight = models.DecimalField(max_digits=6, decimal_places=2)
     weight_unit = models.CharField(choices=DimensionUnits.choices(), max_length=15, default=WeightUnits.KG)
     height = models.DecimalField(max_digits=6, decimal_places=2),
