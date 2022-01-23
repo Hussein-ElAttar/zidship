@@ -1,7 +1,8 @@
 from core.models import TimestampedModel
 from django.db import models
 
-from shipments.enums import DimensionUnits, ShipmentStatus, WeightUnits
+from shipments.enums import (DimensionUnitsEnum, ShipmentStatusEnum,
+                             WeightUnitsEnum)
 
 
 class Courier(models.Model):
@@ -10,15 +11,16 @@ class Courier(models.Model):
 
 
 class Shipment(TimestampedModel):
-    courier = models.ForeignKey('shipments.courier', on_delete=models.CASCADE, related_name="%(class)s_courier")
-    status = models.ForeignKey('shipments.shipmentStatus', on_delete=models.CASCADE, related_name="%(class)s_courier")
+    courier = models.ForeignKey('shipments.Courier', on_delete=models.CASCADE, related_name="%(class)s_courier")
+    status = models.ForeignKey('shipments.ShipmentStatus', on_delete=models.CASCADE, related_name="%(class)s_courier")
+    shipment_method = models.ForeignKey('shipments.ShipmentMethod', on_delete=models.CASCADE, related_name="%(class)s_courier")
     tracking_id = models.CharField(null=True, max_length=200)
     weight = models.DecimalField(max_digits=6, decimal_places=2)
-    weight_unit = models.CharField(choices=DimensionUnits.choices(), max_length=15, default=WeightUnits.KG)
+    weight_unit = models.CharField(choices=WeightUnitsEnum.choices(), max_length=15, default=WeightUnitsEnum.KG)
     height = models.DecimalField(max_digits=6, decimal_places=2),
     width = models.DecimalField(max_digits=6, decimal_places=2),
     length = models.DecimalField(max_digits=6, decimal_places=2),
-    dimensions_unit = models.CharField(choices=DimensionUnits.choices(), max_length=15, default=DimensionUnits.CM)
+    dimensions_unit = models.CharField(choices=DimensionUnitsEnum.choices(), max_length=15, default=DimensionUnitsEnum.CM)
     sender_address = models.CharField(max_length=200)
     sender_country = models.CharField(max_length=200)
     sender_city = models.CharField(max_length=200)
@@ -33,13 +35,14 @@ class Shipment(TimestampedModel):
     estimated_delivery_date = models.DateTimeField(null=True),
 
 
-class ShipmentMethods(models.Model):
+class ShipmentMethod(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
+    courier = models.ForeignKey('shipments.Courier', on_delete=models.CASCADE, related_name="%(class)s_courier")
 
 
 class ShipmentStatus(models.Model):
-    status = models.CharField(choices=ShipmentStatus.choices(),max_length=100, default=ShipmentStatus.PENDING, db_index=True)
-    courier = models.ForeignKey('shipments.courier', on_delete=models.CASCADE, related_name="%(class)s_courier")
-    source_id = models.CharField(null=True, max_length=200)
-    source_description = models.TextField(blank=True, null=True)
+    status = models.CharField(choices=ShipmentStatusEnum.choices(), max_length=100, default=ShipmentStatusEnum.PENDING, db_index=True)
+    courier = models.ForeignKey('shipments.Courier', on_delete=models.CASCADE, related_name="%(class)s_courier")
+    at_courier_status = models.CharField(null=True, max_length=200)
+    at_courier_description = models.TextField(blank=True, null=True)

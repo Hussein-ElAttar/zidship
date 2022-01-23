@@ -9,7 +9,7 @@ class BaseEnum(enum.Enum):
         return (tuple((i.name, i.value) for i in cls))
 
 
-class ShipmentStatus(str, BaseEnum):
+class ShipmentStatusEnum(str, BaseEnum):
     PENDING = 'pending'
     CONFIRMED = 'confirmed'
     IN_PROGRESS = 'in_progress'
@@ -17,11 +17,11 @@ class ShipmentStatus(str, BaseEnum):
     CANCELED = 'canceled'
 
 
-class DimensionUnits(str, BaseEnum):
+class DimensionUnitsEnum(str, BaseEnum):
     CM = 'cm'
     Inch = 'in'
 
 
-class WeightUnits(str, BaseEnum):
+class WeightUnitsEnum(str, BaseEnum):
     KG = 'kg'
     Pound = 'lb'
