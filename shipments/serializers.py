@@ -29,10 +29,14 @@ class ShipmentStatusSerializer(serializers.ModelSerializer):
 
 
 class ShipmentSerializer(serializers.ModelSerializer):
-    status = ShipmentStatusSerializer(read_only=True)
-    courier = CourierSerializer(read_only=True)
-    shipment_method = ShipmentMethodSerializer(read_only=True)
 
     class Meta:
         model = Shipment
         fields = '__all__'
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['courier'] = CourierSerializer(instance.courier).data
+        response['status'] = ShipmentStatusSerializer(instance.status).data
+        response['shipment_method'] = ShipmentMethodSerializer(instance.shipment_method).data
+        return response

@@ -20,7 +20,8 @@ from shipments import views
 
 urlpatterns = [
     path('', views.ShipmentViewSet.as_view({'get': 'list', 'post': 'create'})),
-    path('track/<str:tracking_id>', views.ShipmentViewSet.as_view({'get': 'retrieve'})),
+    path('<int:pk>', views.ShipmentViewSet.as_view({'get': 'retrieve'})),
+    path('<int:pk>/print', views.ShipmentViewSet.as_view({'get': 'print'})),
 
     path('statuses/', views.ShipmentStatusViewSet.as_view({'get': 'list'})),
     path('statuses/<int:pk>/', views.ShipmentStatusViewSet.as_view({'get': 'retrieve'})),

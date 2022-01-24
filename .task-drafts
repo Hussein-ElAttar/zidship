@@ -3,7 +3,11 @@
 - Unified Interface + Use Strategy Pattern
 - Real Integration (Fedex, DHL)
 - Documentation
-- Permissions
+- Permissions using rest framework ==> permission_classes = (AllowAny,) ==> from rest_framework.permissions import AllowAny, IsAuthenticated
+- Write logic in views for now
+- Standardize error handling response
+- Exception classes
+- Add Service & Custom Model manager later
 - Testing
 
 
@@ -15,12 +19,12 @@ Couriers:
     id, name, description,
 
 CourierCredentials:
-    id, courier, client_id, client_secret,
+    id, courier_id, client_id, client_secret,
     token, refresh_token, expiration_date
     base_url, api_url, token_path, auth_flow, scope
 
 Shipments:
-    id, courier, status, tracking_id, timestamps,
+    id, courier_id, status, tracking_id, timestamps,
     weight, weight_unit
     height, width, length, dimensions_unit
     sender_address, sender_country, sender_city
@@ -29,7 +33,7 @@ Shipments:
     receiver_postal_code, receiver_phone_number
     package_type, pickup_date, estimated_delivery_date
 
-ShipmentMethods
+ShipmentMethod
     id, Courier, 
     description, source_id, source_description??,
 
