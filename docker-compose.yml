@@ -49,22 +49,25 @@ services:
     networks:
       - shared_network
 
-
   rabbit:
     image: rabbitmq:3-management
     container_name: zidship_rabbit
-    environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=admin
     ports:
       - "5672:5672"
       - "15672:15672"
     networks:
       - shared_network
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
 
   worker:
     image: backend-image
     container_name: zidship_worker
+    volumes:
+      - .:/app
     restart: on-failure
     command: >
       sh -c "celery --app zidship worker --loglevel=INFO"
@@ -72,6 +75,11 @@ services:
       - web
       - rabbit
       - db
+    env_file:
+      - .env
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     networks:
       - shared_network
 

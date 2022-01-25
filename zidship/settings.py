@@ -145,5 +145,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 USE_L10N = True
 
 # Celery properties
-CELERY_BROKER_URL = 'amqp://admin:admin@rabbit:5672/'
-BROKER_URL = 'amqp://admin:admin@rabbit:5672/'
+CELERY_BROKER_URL = 'amqp://' + os.environ.get('RABBITMQ_USER') + ':' + os.environ.get('RABBITMQ_PASS') + '@rabbit:5672/'
+BROKER_URL = 'amqp://'+os.environ.get('RABBITMQ_USER') + ':' + os.environ.get('RABBITMQ_PASS') + '@rabbit:5672/'

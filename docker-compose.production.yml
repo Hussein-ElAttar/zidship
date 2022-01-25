@@ -9,16 +9,19 @@ services:
       - .env
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - ./.mysql:/var/lib/mysql
     ports:
       - 3866:3386
+    networks:
+      - shared_network
 
   web:
     build: .
+    image: backend-image
     container_name: zidship_web
-    command: python manage.py runserver 0.0.0.0:8000
+    entrypoint: ./entrypoint.sh
     volumes:
       - .:/app
     ports:
@@ -27,6 +30,46 @@ services:
       - .env
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     depends_on:
       - db
+    networks:
+      - shared_network
+
+  rabbit:
+    image: rabbitmq:3-management
+    container_name: zidship_rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - shared_network
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+
+  worker:
+    image: backend-image
+    container_name: zidship_worker
+    volumes:
+      - .:/app
+    restart: on-failure
+    command: >
+      sh -c "celery --app zidship worker --loglevel=INFO"
+    depends_on:
+      - web
+      - rabbit
+      - db
+    env_file:
+      - .env
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    networks:
+      - shared_network
+
+networks:
+  shared_network:
+    driver: bridge
