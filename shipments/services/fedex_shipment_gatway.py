@@ -1,10 +1,14 @@
 import uuid
 
+from django.template.loader import render_to_string
 from shipments.enums import ShipmentStatusEnum
-from shipments.exceptions import (ShipmentCouldNotBeCanceled,
+from shipments.exceptions import (ShipmentAlreadyCanceled,
+                                  ShipmentCouldNotBeCanceled,
                                   ShipmentCouldNotBeCreated,
                                   ShipmentCouldNotBePrinted,
                                   ShipmentCouldNotBeTracked)
+from shipments.services.abstract_shipment_gateway import PrintWaybillMapping
+from weasyprint import HTML
 
 from .abstract_shipment_gateway import (AbstractShipmentGateway,
                                         CreateWaybillMapping,
@@ -33,19 +37,30 @@ class FedexShipmentGateway(AbstractShipmentGateway):
             return track_shipment_arrays
 
     def cancel_shipment(self) -> bool:
+        if(self.shipment.status.status in [ShipmentStatusEnum.PENDING_CANCELATION, ShipmentStatusEnum.CANCELED]):
+            raise ShipmentAlreadyCanceled
+
         try:
-            self.shipment.status = ShipmentStatusEnum.CANCELED
+            self.shipment.status = self.shipment.courier.shipmentstatus_courier.filter(status=ShipmentStatusEnum.PENDING_CANCELATION).get()
             self.shipment.save()
-        except:
+    
+            # TODO:: Use workers here
+            self.shipment.status = self.shipment.courier.shipmentstatus_courier.filter(status=ShipmentStatusEnum.CANCELED).get()
+            self.shipment.save()
+
+        except Exception as e:
+            print(e)
             raise ShipmentCouldNotBeCanceled
         else:
-            return True
+            return self.shipment
 
     def print_waybill(self):
         try:
-            self.shipment.status = ShipmentStatusEnum.CANCELED
-            self.shipment.save()
+            html_string = render_to_string('shipments/fedex_label.html', context={'shipment': self.shipment})
+            html = HTML(string=html_string)
+            pdf_file = html.write_pdf()
         except:
             raise ShipmentCouldNotBePrinted
         else:
-            return True
+            return PrintWaybillMapping(file=pdf_file)
+

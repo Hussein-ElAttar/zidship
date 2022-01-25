@@ -1,7 +1,9 @@
 from django.db import transaction
+from django.http import HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
+from shipments.enums import ShipmentStatusEnum
 from shipments.models import Courier, Shipment, ShipmentStatus
 from shipments.serializers import (CourierSerializer, ShipmentSerializer,
                                    ShipmentStatusSerializer)
@@ -57,7 +59,23 @@ class ShipmentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def print(self, request, *args, **kwargs):
+        """Print pdf."""
         instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        shipment_gateway = FactoryShipmentGateway.get_shipment_gateway(instance)
+        print_waybill_mapping = shipment_gateway.print_waybill()
 
+        response = HttpResponse(print_waybill_mapping.file, content_type=print_waybill_mapping.filetype)
+        response['Content-Disposition'] = f'filename="{print_waybill_mapping.filename}"'
+        return response
+
+
+    def cancel(self, request, *args, **kwargs):
+        """Cancel Shipment"""
+        instance = self.get_object()
+
+        # TODO:: Use workers here
+        shipment_gateway = FactoryShipmentGateway.get_shipment_gateway(instance)
+        shipment = shipment_gateway.cancel_shipment()
+        serializer = self.get_serializer(shipment)
+
+        return Response(serializer.data)

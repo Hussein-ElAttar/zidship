@@ -10,10 +10,12 @@ class BaseEnum(enum.Enum):
 
 
 class ShipmentStatusEnum(str, BaseEnum):
+    PROCCESSING = 'proccessing'
     PENDING = 'pending'
     CONFIRMED = 'confirmed'
     IN_PROGRESS = 'in_progress'
     DELIVERED = 'delivered'
+    PENDING_CANCELATION = 'pending-cancelation'
     CANCELED = 'canceled'
 
 

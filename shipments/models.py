@@ -46,3 +46,6 @@ class ShipmentStatus(models.Model):
     courier = models.ForeignKey('shipments.Courier', on_delete=models.CASCADE, related_name="%(class)s_courier")
     at_courier_status = models.CharField(null=True, max_length=200)
     at_courier_description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('status', 'courier',)

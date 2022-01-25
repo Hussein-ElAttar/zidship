@@ -6,3 +6,4 @@ psycopg2>=2.8
 djangorestframework_simplejwt
 django-seed
 django-filter
+weasyprint
