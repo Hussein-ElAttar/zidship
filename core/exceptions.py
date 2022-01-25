@@ -1,5 +1,9 @@
+from rest_framework.exceptions import APIException
 from rest_framework.views import exception_handler
 
+
+class CoreException(APIException):
+    pass
 
 def core_exception_handler(exc, context):
     # If an exception is thrown that we don't explicitly handle here, we want
@@ -9,12 +13,16 @@ def core_exception_handler(exc, context):
     response = exception_handler(exc, context)
     handlers = {
         'NotFound': _handle_not_found_error,
-        'ValidationError': _handle_generic_error
+        'ValidationError': _handle_generic_error,
+        'CoreException': _handle_generic_error
     }
     # This is how we identify the type of the current exception. We will use
     # this in a moment to see whether we should handle this exception or let
     # Django REST Framework do it's thing.
     exception_class = exc.__class__.__name__
+
+    if isinstance(exc, CoreException):
+        return handlers['CoreException'](exc, context, response)
 
     if exception_class in handlers:
         # If this exception is one that we can handle, handle it. Otherwise,
