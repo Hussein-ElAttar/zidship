@@ -7,3 +7,4 @@ djangorestframework_simplejwt
 django-seed
 django-filter
 weasyprint
+celery
