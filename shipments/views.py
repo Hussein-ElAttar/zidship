@@ -11,6 +11,7 @@ from shipments.services import FactoryShipmentGateway
 
 from .models import ShipmentMethod
 from .serializers import ShipmentMethodSerializer
+from .tasks import cancel_shipment_task, create_shipment_task
 
 
 class CourierViewSet(viewsets.ReadOnlyModelViewSet):
@@ -49,11 +50,14 @@ class ShipmentViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        instance = serializer.save()
+        shipment = serializer.save()
 
-        # TODO:: Use workers here
-        shipment_gateway = FactoryShipmentGateway.get_shipment_gateway(instance)
-        tracking_id = shipment_gateway.create_waybill()
+        # Validate with third party
+        shipment_gateway = FactoryShipmentGateway.get_shipment_gateway(shipment)
+        shipment_gateway.is_valid_shipment(raise_exception=True)
+
+        # Task
+        create_shipment_task.delay(shipment.id)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -70,12 +74,17 @@ class ShipmentViewSet(viewsets.ModelViewSet):
 
 
     def cancel(self, request, *args, **kwargs):
-        """Cancel Shipment"""
-        instance = self.get_object()
+        """Cancel Shipment if applicable"""
+        shipment = self.get_object()
+        shipment_gateway = FactoryShipmentGateway.get_shipment_gateway(shipment)
+        shipment_gateway.is_shipment_cancable(raise_exception=True)
 
-        # TODO:: Use workers here
-        shipment_gateway = FactoryShipmentGateway.get_shipment_gateway(instance)
-        shipment = shipment_gateway.cancel_shipment()
+        shipment.status = shipment.courier.shipmentstatus_courier.filter(status=ShipmentStatusEnum.PENDING_CANCELATION).get()
+        shipment.save()
+
+        # Task
+        cancel_shipment_task.delay(shipment.id)
+
         serializer = self.get_serializer(shipment)
 
         return Response(serializer.data)

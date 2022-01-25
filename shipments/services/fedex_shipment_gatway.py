@@ -7,6 +7,7 @@ from shipments.exceptions import (ShipmentAlreadyCanceled,
                                   ShipmentCouldNotBeCreated,
                                   ShipmentCouldNotBePrinted,
                                   ShipmentCouldNotBeTracked)
+from shipments.models import Shipment
 from shipments.services.abstract_shipment_gateway import PrintWaybillMapping
 from weasyprint import HTML
 
@@ -36,15 +37,9 @@ class FedexShipmentGateway(AbstractShipmentGateway):
         else:
             return track_shipment_arrays
 
-    def cancel_shipment(self) -> bool:
-        if(self.shipment.status.status in [ShipmentStatusEnum.PENDING_CANCELATION, ShipmentStatusEnum.CANCELED]):
-            raise ShipmentAlreadyCanceled
-
+    def cancel_shipment(self) -> Shipment:
         try:
-            self.shipment.status = self.shipment.courier.shipmentstatus_courier.filter(status=ShipmentStatusEnum.PENDING_CANCELATION).get()
-            self.shipment.save()
-    
-            # TODO:: Use workers here
+            print("Calling fedex api and fetching needed data")
             self.shipment.status = self.shipment.courier.shipmentstatus_courier.filter(status=ShipmentStatusEnum.CANCELED).get()
             self.shipment.save()
 
@@ -64,3 +59,11 @@ class FedexShipmentGateway(AbstractShipmentGateway):
         else:
             return PrintWaybillMapping(file=pdf_file)
 
+    def is_shipment_cancable(self, raise_exception=True):
+        if(self.shipment.status.status in [ShipmentStatusEnum.PENDING_CANCELATION, ShipmentStatusEnum.CANCELED]):
+            raise ShipmentAlreadyCanceled
+
+
+    def is_valid_shipment(self, raise_exception=True):
+        print("Calling fedex api and validating data")
+        return True

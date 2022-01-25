@@ -1,7 +1,7 @@
 import uuid
 from abc import ABC, abstractmethod
 
-from django.template.loader import render_to_string
+from shipments.exceptions import CourierDoesNotSupportCancel
 from shipments.models import Courier, Shipment
 from shipments.serializers import ShipmentSerializer
 
@@ -30,7 +30,7 @@ class PrintWaybillMapping():
     def __init__(self, *args, **kwargs):
         self.file = kwargs['file']
         self.filetype = 'application/pdf'
-        self.filename = 'Waybill'+ '-' + str(uuid.uuid4()) + '.pdf'
+        self.filename = 'Waybill' + '-' + str(uuid.uuid4()) + '.pdf'
 
 
 class AbstractShipmentGateway(ABC):
@@ -56,5 +56,14 @@ class AbstractShipmentGateway(ABC):
         pass
 
     @abstractmethod
-    def cancel_shipment(self) -> Shipment:
+    def is_valid_shipment(self, raise_exception=True):
         pass
+
+    def cancel_shipment(self) -> Shipment:
+        self.is_shipment_cancable(raise_exception=True)
+
+    def is_shipment_cancable(self, raise_exception=True):
+        if(raise_exception):
+            raise CourierDoesNotSupportCancel
+        else:
+            return False
