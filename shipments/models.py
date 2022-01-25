@@ -17,9 +17,9 @@ class Shipment(TimestampedModel):
     tracking_id = models.CharField(null=True, max_length=200)
     weight = models.DecimalField(max_digits=6, decimal_places=2)
     weight_unit = models.CharField(choices=WeightUnitsEnum.choices(), max_length=15, default=WeightUnitsEnum.KG)
-    height = models.DecimalField(max_digits=6, decimal_places=2),
-    width = models.DecimalField(max_digits=6, decimal_places=2),
-    length = models.DecimalField(max_digits=6, decimal_places=2),
+    height = models.DecimalField(max_digits=6, decimal_places=2)
+    width = models.DecimalField(max_digits=6, decimal_places=2)
+    length = models.DecimalField(max_digits=6, decimal_places=2)
     dimensions_unit = models.CharField(choices=DimensionUnitsEnum.choices(), max_length=15, default=DimensionUnitsEnum.CM)
     sender_address = models.CharField(max_length=200)
     sender_country = models.CharField(max_length=200)
@@ -31,8 +31,8 @@ class Shipment(TimestampedModel):
     receiver_city = models.CharField(max_length=200)
     receiver_postal_code = models.CharField(max_length=15)
     receiver_phone_number = models.CharField(max_length=15)
-    pickup_date = models.DateTimeField(null=True),
-    estimated_delivery_date = models.DateTimeField(null=True),
+    pickup_date = models.DateTimeField(null=True)
+    estimated_delivery_date = models.DateTimeField(null=True)
 
 
 class ShipmentMethod(models.Model):
