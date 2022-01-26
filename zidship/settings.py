@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'shipments',
     'authentication',
     'rest_framework',
+    'drf_spectacular',
     'django_filters',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,7 +60,17 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'core.renderers.ZidshipJSONRenderer',
         'rest_framework.renderers.JSONRenderer'
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Zidship API',
+    'DESCRIPTION': 'At ZidShip, we work with a lot of couriers (more than 15 of them).',
+    'VERSION': '1.0.0',
+    'url': '.schema.yaml',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
 }
 
 MIDDLEWARE = [

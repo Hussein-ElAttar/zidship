@@ -1,0 +1,644 @@
+openapi: 3.0.3
+info:
+  title: Zidship API
+  version: 1.0.0
+  description: At ZidShip, we work with a lot of couriers (more than 15 of them).
+paths:
+  /api/auth/token/:
+    post:
+      operationId: auth_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/auth/token/refresh/:
+    post:
+      operationId: auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/shipments/:
+    get:
+      operationId: shipments_list
+      description: This viewset automatically provides `list` and `retrieve` actions.
+      parameters:
+      - in: query
+        name: courier
+        schema:
+          type: integer
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - shipments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedShipmentList'
+          description: ''
+    post:
+      operationId: shipments_create
+      description: Create Shipment.
+      tags:
+      - shipments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shipment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Shipment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Shipment'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+          description: ''
+  /api/shipments/{id}:
+    get:
+      operationId: shipments_retrieve
+      description: This viewset automatically provides `list` and `retrieve` actions.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shipments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+          description: ''
+  /api/shipments/{id}/cancel:
+    post:
+      operationId: shipments_cancel_create
+      description: Cancel Shipment if applicable
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shipments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shipment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Shipment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Shipment'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+          description: ''
+  /api/shipments/{id}/print:
+    get:
+      operationId: shipments_print_retrieve
+      description: Print pdf.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shipments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+          description: ''
+  /api/shipments/{id}/track:
+    get:
+      operationId: shipments_track_retrieve
+      description: Track Shipment.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shipments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+          description: ''
+  /api/shipments/couriers/:
+    get:
+      operationId: shipments_couriers_list
+      description: '`list` and `retrieve` Courier actions.'
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - shipments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCourierList'
+          description: ''
+  /api/shipments/couriers/{id}/:
+    get:
+      operationId: shipments_couriers_retrieve
+      description: '`list` and `retrieve` Courier actions.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shipments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Courier'
+          description: ''
+  /api/shipments/methods/:
+    get:
+      operationId: shipments_methods_list
+      description: '`list` and `retrieve` Courier actions.'
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - shipments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedShipmentMethodList'
+          description: ''
+  /api/shipments/methods/{id}/:
+    get:
+      operationId: shipments_methods_retrieve
+      description: '`list` and `retrieve` Courier actions.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shipments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentMethod'
+          description: ''
+  /api/shipments/statuses/:
+    get:
+      operationId: shipments_statuses_list
+      description: '`list` and `retrieve` Available ShipmentStatuses actions.'
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - shipments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedShipmentStatusList'
+          description: ''
+  /api/shipments/statuses/{id}/:
+    get:
+      operationId: shipments_statuses_retrieve
+      description: '`list` and `retrieve` Available ShipmentStatuses actions.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - shipments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentStatus'
+          description: ''
+components:
+  schemas:
+    CodeEnum:
+      enum:
+      - PROCCESSING
+      - PENDING
+      - CONFIRMED
+      - IN_PROGRESS
+      - DELIVERED
+      - PENDING_CANCELATION
+      - CANCELED
+      type: string
+    Courier:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+      required:
+      - id
+      - name
+    DimensionsUnitEnum:
+      enum:
+      - CM
+      - Inch
+      type: string
+    PaginatedCourierList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Courier'
+    PaginatedShipmentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Shipment'
+    PaginatedShipmentMethodList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShipmentMethod'
+    PaginatedShipmentStatusList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShipmentStatus'
+    Shipment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        tracking_id:
+          type: string
+          nullable: true
+          maxLength: 200
+        weight:
+          type: string
+          format: decimal
+          pattern: ^\d{0,4}(?:\.\d{0,2})?$
+        weight_unit:
+          $ref: '#/components/schemas/WeightUnitEnum'
+        height:
+          type: string
+          format: decimal
+          pattern: ^\d{0,4}(?:\.\d{0,2})?$
+        width:
+          type: string
+          format: decimal
+          pattern: ^\d{0,4}(?:\.\d{0,2})?$
+        length:
+          type: string
+          format: decimal
+          pattern: ^\d{0,4}(?:\.\d{0,2})?$
+        dimensions_unit:
+          $ref: '#/components/schemas/DimensionsUnitEnum'
+        sender_address:
+          type: string
+          maxLength: 200
+        sender_country:
+          type: string
+          maxLength: 200
+        sender_city:
+          type: string
+          maxLength: 200
+        sender_postal_code:
+          type: string
+          maxLength: 200
+        sender_phone_number:
+          type: string
+          maxLength: 15
+        receiver_address:
+          type: string
+          maxLength: 200
+        receiver_country:
+          type: string
+          maxLength: 200
+        receiver_city:
+          type: string
+          maxLength: 200
+        receiver_postal_code:
+          type: string
+          maxLength: 15
+        receiver_phone_number:
+          type: string
+          maxLength: 15
+        pickup_date:
+          type: string
+          format: date-time
+          nullable: true
+        estimated_delivery_date:
+          type: string
+          format: date-time
+          nullable: true
+        courier:
+          $ref: '#/components/schemas/Courier'
+        status:
+          $ref: '#/components/schemas/ShipmentStatus'
+        shipment_method:
+          $ref: '#/components/schemas/ShipmentMethod'
+        user:
+          type: integer
+      required:
+      - courier
+      - created_at
+      - height
+      - id
+      - length
+      - receiver_address
+      - receiver_city
+      - receiver_country
+      - receiver_phone_number
+      - receiver_postal_code
+      - sender_address
+      - sender_city
+      - sender_country
+      - sender_phone_number
+      - sender_postal_code
+      - shipment_method
+      - status
+      - updated_at
+      - user
+      - weight
+      - width
+    ShipmentMethod:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        courier:
+          allOf:
+          - $ref: '#/components/schemas/Courier'
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          nullable: true
+      required:
+      - courier
+      - id
+      - name
+    ShipmentStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        courier:
+          allOf:
+          - $ref: '#/components/schemas/Courier'
+          readOnly: true
+        code:
+          allOf:
+          - $ref: '#/components/schemas/CodeEnum'
+          default: ShipmentStatusEnum.PROCCESSING
+        description:
+          type: string
+          nullable: true
+        external_code:
+          type: string
+          nullable: true
+          maxLength: 200
+        external_description:
+          type: string
+          nullable: true
+      required:
+      - courier
+      - external_code
+      - id
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    WeightUnitEnum:
+      enum:
+      - KG
+      - Pound
+      type: string
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
