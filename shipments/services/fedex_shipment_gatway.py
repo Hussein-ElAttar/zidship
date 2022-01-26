@@ -1,4 +1,5 @@
 import uuid
+from typing import List
 
 from django.template.loader import render_to_string
 from shipments.enums import ShipmentStatusEnum
@@ -26,8 +27,11 @@ class FedexShipmentGateway(AbstractShipmentGateway):
         else:
             return CreateWaybillMapping(tracking_id=tracking_id)
 
-    def track_shipment(self) -> list[TrackShipmentMapping]:
+    def track_shipment(self) -> List[TrackShipmentMapping]:
         try:
+            if(self.shipment.status.code == ShipmentStatusEnum.PROCCESSING):
+                return [TrackShipmentMapping(location='', description='Shipment is still proccessing')]
+
             track_shipment_arrays = []
             track_shipment_arrays.append(TrackShipmentMapping(location='Alexandria', description='Shipment picked up'))
             track_shipment_arrays.append(TrackShipmentMapping(location='Alexandria', description='Shipment arrived at facility'))
@@ -40,7 +44,7 @@ class FedexShipmentGateway(AbstractShipmentGateway):
     def cancel_shipment(self) -> Shipment:
         try:
             print("Calling fedex api and fetching needed data")
-            self.shipment.status = self.shipment.courier.shipmentstatus_courier.filter(status=ShipmentStatusEnum.CANCELED).get()
+            self.shipment.status = self.shipment.courier.shipmentstatus_courier.filter(code=ShipmentStatusEnum.CANCELED).get()
             self.shipment.save()
 
         except Exception as e:
@@ -60,7 +64,7 @@ class FedexShipmentGateway(AbstractShipmentGateway):
             return PrintWaybillMapping(file=pdf_file)
 
     def is_shipment_cancable(self, raise_exception=True):
-        if(self.shipment.status.status in [ShipmentStatusEnum.PENDING_CANCELATION, ShipmentStatusEnum.CANCELED]):
+        if(self.shipment.status.code in [ShipmentStatusEnum.PENDING_CANCELATION, ShipmentStatusEnum.CANCELED]):
             raise ShipmentAlreadyCanceled
 
 

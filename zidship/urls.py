@@ -17,6 +17,6 @@ from django.urls import path
 from django.urls.conf import include
 
 urlpatterns = [
-    path('shipments/', include('shipments.urls')),
-    path('auth/', include('authentication.urls')),
+    path('api/shipments/', include('shipments.urls')),
+    path('api/auth/', include('authentication.urls')),
 ]

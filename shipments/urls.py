@@ -22,6 +22,7 @@ urlpatterns = [
     path('', views.ShipmentViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('<int:pk>', views.ShipmentViewSet.as_view({'get': 'retrieve'})),
     path('<int:pk>/print', views.ShipmentViewSet.as_view({'get': 'print'})),
+    path('<int:pk>/track', views.ShipmentViewSet.as_view({'get': 'track'})),
     path('<int:pk>/cancel', views.ShipmentViewSet.as_view({'post': 'cancel'})),
 
     path('statuses/', views.ShipmentStatusViewSet.as_view({'get': 'list'})),
@@ -33,5 +34,3 @@ urlpatterns = [
     path('couriers/', views.CourierViewSet.as_view({'get': 'list'})),
     path('couriers/<int:pk>/', views.CourierViewSet.as_view({'get': 'retrieve'})),
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)

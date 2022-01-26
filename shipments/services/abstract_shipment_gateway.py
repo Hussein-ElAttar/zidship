@@ -1,5 +1,6 @@
 import uuid
 from abc import ABC, abstractmethod
+from typing import List
 
 from shipments.exceptions import CourierDoesNotSupportCancel
 from shipments.models import Courier, Shipment
@@ -52,7 +53,7 @@ class AbstractShipmentGateway(ABC):
         pass
 
     @abstractmethod
-    def track_shipment(self) -> list[TrackShipmentMapping]:
+    def track_shipment(self) -> List[TrackShipmentMapping]:
         pass
 
     @abstractmethod

@@ -31,13 +31,13 @@ class Command(BaseCommand):
             seeder.add_entity(ShipmentMethod, 1, {'name': 'Within 7 Days'})
 
         if not ShipmentStatus.objects.exists():
-            seeder.add_entity(ShipmentStatus, 1, {'status':ShipmentStatusEnum.PROCCESSING })
-            seeder.add_entity(ShipmentStatus, 1, {'status':ShipmentStatusEnum.PENDING })
-            seeder.add_entity(ShipmentStatus, 1, {'status':ShipmentStatusEnum.CONFIRMED })
-            seeder.add_entity(ShipmentStatus, 1, {'status':ShipmentStatusEnum.IN_PROGRESS })
-            seeder.add_entity(ShipmentStatus, 1, {'status':ShipmentStatusEnum.DELIVERED })
-            seeder.add_entity(ShipmentStatus, 1, {'status':ShipmentStatusEnum.PENDING_CANCELATION })
-            seeder.add_entity(ShipmentStatus, 1, {'status':ShipmentStatusEnum.CANCELED })
+            seeder.add_entity(ShipmentStatus, 1, {'code':ShipmentStatusEnum.PROCCESSING, 'external_code': ShipmentStatusEnum.PROCCESSING })
+            seeder.add_entity(ShipmentStatus, 1, {'code':ShipmentStatusEnum.PENDING, 'external_code': ShipmentStatusEnum.PENDING })
+            seeder.add_entity(ShipmentStatus, 1, {'code':ShipmentStatusEnum.CONFIRMED, 'external_code': ShipmentStatusEnum.CONFIRMED })
+            seeder.add_entity(ShipmentStatus, 1, {'code':ShipmentStatusEnum.IN_PROGRESS, 'external_code': ShipmentStatusEnum.IN_PROGRESS })
+            seeder.add_entity(ShipmentStatus, 1, {'code':ShipmentStatusEnum.DELIVERED, 'external_code': ShipmentStatusEnum.DELIVERED })
+            seeder.add_entity(ShipmentStatus, 1, {'code':ShipmentStatusEnum.PENDING_CANCELATION, 'external_code': ShipmentStatusEnum.PENDING_CANCELATION })
+            seeder.add_entity(ShipmentStatus, 1, {'code':ShipmentStatusEnum.CANCELED, 'external_code': ShipmentStatusEnum.CANCELED })
 
         if not Shipment.objects.exists():
             seeder.add_entity(Shipment, 10, {
@@ -52,5 +52,6 @@ class Command(BaseCommand):
                 'receiver_city': lambda x: seeder.faker.city(),
                 'receiver_postal_code': lambda x: seeder.faker.postcode(),
                 'receiver_phone_number': lambda x: seeder.faker.phone_number(),
+                'user': user
             })
         inserted_pks = seeder.execute()
