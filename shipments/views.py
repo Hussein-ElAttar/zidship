@@ -53,7 +53,6 @@ class ShipmentViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     filterset_fields = ['courier']
 
-    @transaction.atomic
     def create(self, request, *args, **kwargs):
         """Create Shipment."""
         request.data['user'] = request.user.id
@@ -61,9 +60,8 @@ class ShipmentViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         shipment = serializer.save()
 
-        # Validate with third party
-        shipment_gateway = FactoryShipmentGateway.get_shipment_gateway(
-            shipment)
+        # Should Validate with third party
+        shipment_gateway = FactoryShipmentGateway.get_shipment_gateway(shipment)
         shipment_gateway.is_valid_shipment(raise_exception=True)
 
         # Task

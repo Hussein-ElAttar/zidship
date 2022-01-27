@@ -27,3 +27,7 @@ class DimensionUnitsEnum(str, BaseEnum):
 class WeightUnitsEnum(str, BaseEnum):
     KG = 'kg'
     Pound = 'lb'
+
+class CourierEnvironmentEnum(str, BaseEnum):
+    SANDBOX = 'sandbox'
+    LIVE = 'live'

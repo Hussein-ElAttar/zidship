@@ -33,6 +33,7 @@ class ShipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shipment
         fields = '__all__'
+        read_only_fields =('tracking_id', )
 
     def to_representation(self, instance):
         response = super().to_representation(instance)

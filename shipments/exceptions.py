@@ -4,6 +4,10 @@ from core.exceptions import CoreException
 class ShipmentException(CoreException):
     pass
 
+class CourierNotSupported(ShipmentException):
+    status_code = 400
+    default_detail = 'This courier is not supported'
+
 class CourierDoesNotSupportCancel(ShipmentException):
     status_code = 400
     default_detail = 'This courier does not support cancelation'

@@ -43,7 +43,7 @@ def _handle_validation_error(exc, context, response):
 def _handle_zidship_error(exc, context, response):
     try:
         message = response.data.get('detail')
-        response.data = {'data': [], 'message': message, 'errors': [message], 'status': True}
+        response.data = {'data': [], 'message': message, 'errors': [message], 'status': False}
     except:
         pass
     return response

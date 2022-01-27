@@ -8,4 +8,6 @@ django-seed
 django-filter
 weasyprint
 celery
+drf_spectacular
+requests
 watchdog

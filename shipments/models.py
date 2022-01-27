@@ -1,13 +1,27 @@
 from core.models import TimestampedModel
 from django.db import models
 
-from shipments.enums import (DimensionUnitsEnum, ShipmentStatusEnum,
-                             WeightUnitsEnum)
+from shipments.enums import (CourierEnvironmentEnum, DimensionUnitsEnum,
+                             ShipmentStatusEnum, WeightUnitsEnum)
 
 
 class Courier(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+
+class CourierApiSettings(models.Model):
+    courier = models.ForeignKey('shipments.Courier', on_delete=models.CASCADE, related_name="%(class)s_courier")
+    client_id = models.CharField(max_length=255, null=True)
+    client_secret = models.CharField(max_length=255, null=True)
+    access_token = models.TextField(null=True)
+    refresh_token = models.CharField(max_length=255, null=True)
+    token_expiration_date = models.DateTimeField(null=True)
+    base_url  = models.CharField(max_length=255, null=True)
+    api_url  = models.CharField(max_length=255)
+    token_path  = models.CharField(max_length=255, null=True, default='oauth/token')
+    auth_flow  = models.CharField(max_length=255, null=True, blank=True)
+    scope = models.CharField(max_length=255, null=True, blank=True)
+    env = models.CharField(choices=CourierEnvironmentEnum.choices(), max_length=30, default=CourierEnvironmentEnum.SANDBOX)
 
 
 class Shipment(TimestampedModel):
@@ -40,7 +54,6 @@ class ShipmentMethod(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     courier = models.ForeignKey('shipments.Courier', on_delete=models.CASCADE, related_name="%(class)s_courier")
-
 
 class ShipmentStatus(models.Model):
     code = models.CharField(choices=ShipmentStatusEnum.choices(), max_length=100, default=ShipmentStatusEnum.PROCCESSING, db_index=True)

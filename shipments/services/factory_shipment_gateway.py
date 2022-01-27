@@ -1,4 +1,5 @@
 from abc import ABC
+from shipments.exceptions import CourierNotSupported
 
 from shipments.models import Shipment
 
@@ -16,6 +17,6 @@ class FactoryShipmentGateway(ABC):
         Gateway = cls.gateways.get(shipment.courier.id, None)
 
         if(Gateway is None):
-            return None
+            raise CourierNotSupported
 
         return Gateway(shipment=shipment)
