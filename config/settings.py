@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from datetime import timedelta
 import os
 from pathlib import Path
 
@@ -163,3 +164,7 @@ USE_L10N = True
 # Celery properties
 CELERY_BROKER_URL = 'amqp://' + os.environ.get('RABBITMQ_USER') + ':' + os.environ.get('RABBITMQ_PASS') + '@rabbit:5672/'
 BROKER_URL = 'amqp://'+os.environ.get('RABBITMQ_USER') + ':' + os.environ.get('RABBITMQ_PASS') + '@rabbit:5672/'
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+}
