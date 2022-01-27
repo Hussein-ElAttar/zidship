@@ -1,4 +1,4 @@
-from zidship.celery import app
+from config.celery import app
 
 from shipments.models import Shipment
 from shipments.services.factory_shipment_gateway import FactoryShipmentGateway

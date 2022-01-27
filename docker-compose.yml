@@ -72,7 +72,7 @@ services:
       - .:/app
     restart: on-failure
     command: >
-      sh -c "watchmedo auto-restart -- celery --app zidship worker --loglevel=INFO"
+      sh -c "watchmedo auto-restart -- celery --app config worker --loglevel=INFO"
     depends_on:
       - web
       - rabbit

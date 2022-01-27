@@ -18,7 +18,7 @@ from .tasks import cancel_shipment_task, create_shipment_task
 
 class CourierViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    `list` and `retrieve` Courier actions.
+    `list` and `retrieve` Couriers.
     """
     queryset = Courier.objects.all()
     serializer_class = CourierSerializer
@@ -27,7 +27,7 @@ class CourierViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ShipmentStatusViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    `list` and `retrieve` Available ShipmentStatuses actions.
+    `list` and `retrieve` Available Shipment Statuses.
     """
     queryset = ShipmentStatus.objects.all()
     serializer_class = ShipmentStatusSerializer
@@ -36,7 +36,7 @@ class ShipmentStatusViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ShipmentMethodViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    `list` and `retrieve` Courier actions.
+    `list` and `retrieve` Shipment Methods.
     """
     queryset = ShipmentMethod.objects.all()
     serializer_class = ShipmentMethodSerializer

@@ -93,13 +93,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Shipment'
+              $ref: '#/components/schemas/ShipmentCreate'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Shipment'
+              $ref: '#/components/schemas/ShipmentCreate'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Shipment'
+              $ref: '#/components/schemas/ShipmentCreate'
         required: true
       security:
       - jwtAuth: []
@@ -209,7 +209,7 @@ paths:
   /api/shipments/couriers/:
     get:
       operationId: shipments_couriers_list
-      description: '`list` and `retrieve` Courier actions.'
+      description: '`list` and `retrieve` Couriers.'
       parameters:
       - name: page
         required: false
@@ -231,7 +231,7 @@ paths:
   /api/shipments/couriers/{id}/:
     get:
       operationId: shipments_couriers_retrieve
-      description: '`list` and `retrieve` Courier actions.'
+      description: '`list` and `retrieve` Couriers.'
       parameters:
       - in: path
         name: id
@@ -252,7 +252,7 @@ paths:
   /api/shipments/methods/:
     get:
       operationId: shipments_methods_list
-      description: '`list` and `retrieve` Courier actions.'
+      description: '`list` and `retrieve` Shipment Methods.'
       parameters:
       - name: page
         required: false
@@ -274,7 +274,7 @@ paths:
   /api/shipments/methods/{id}/:
     get:
       operationId: shipments_methods_retrieve
-      description: '`list` and `retrieve` Courier actions.'
+      description: '`list` and `retrieve` Shipment Methods.'
       parameters:
       - in: path
         name: id
@@ -295,7 +295,7 @@ paths:
   /api/shipments/statuses/:
     get:
       operationId: shipments_statuses_list
-      description: '`list` and `retrieve` Available ShipmentStatuses actions.'
+      description: '`list` and `retrieve` Available Shipment Statuses.'
       parameters:
       - name: page
         required: false
@@ -317,7 +317,7 @@ paths:
   /api/shipments/statuses/{id}/:
     get:
       operationId: shipments_statuses_retrieve
-      description: '`list` and `retrieve` Available ShipmentStatuses actions.'
+      description: '`list` and `retrieve` Available Shipment Statuses.'
       parameters:
       - in: path
         name: id
@@ -446,12 +446,18 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ShipmentStatus'
-    Shipment:
+    ShipmentCreate:
       type: object
       properties:
         id:
           type: integer
           readOnly: true
+        courier: 
+          type: integer
+        status: 
+          type: integer
+        shipment_method: 
+          type: integer
         created_at:
           type: string
           format: date-time
@@ -462,8 +468,8 @@ components:
           readOnly: true
         tracking_id:
           type: string
+          readOnly: true
           nullable: true
-          maxLength: 200
         weight:
           type: string
           format: decimal
@@ -522,12 +528,6 @@ components:
           type: string
           format: date-time
           nullable: true
-        courier:
-          $ref: '#/components/schemas/Courier'
-        status:
-          $ref: '#/components/schemas/ShipmentStatus'
-        shipment_method:
-          $ref: '#/components/schemas/ShipmentMethod'
         user:
           type: integer
       required:
@@ -548,6 +548,114 @@ components:
       - sender_postal_code
       - shipment_method
       - status
+      - tracking_id
+      - updated_at
+      - user
+      - weight
+      - width
+    Shipment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        courier:
+          $ref: '#/components/schemas/Courier'
+        status:
+          $ref: '#/components/schemas/ShipmentStatus'
+        shipment_method:
+          $ref: '#/components/schemas/ShipmentMethod'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        tracking_id:
+          type: string
+          readOnly: true
+          nullable: true
+        weight:
+          type: string
+          format: decimal
+          pattern: ^\d{0,4}(?:\.\d{0,2})?$
+        weight_unit:
+          $ref: '#/components/schemas/WeightUnitEnum'
+        height:
+          type: string
+          format: decimal
+          pattern: ^\d{0,4}(?:\.\d{0,2})?$
+        width:
+          type: string
+          format: decimal
+          pattern: ^\d{0,4}(?:\.\d{0,2})?$
+        length:
+          type: string
+          format: decimal
+          pattern: ^\d{0,4}(?:\.\d{0,2})?$
+        dimensions_unit:
+          $ref: '#/components/schemas/DimensionsUnitEnum'
+        sender_address:
+          type: string
+          maxLength: 200
+        sender_country:
+          type: string
+          maxLength: 200
+        sender_city:
+          type: string
+          maxLength: 200
+        sender_postal_code:
+          type: string
+          maxLength: 200
+        sender_phone_number:
+          type: string
+          maxLength: 15
+        receiver_address:
+          type: string
+          maxLength: 200
+        receiver_country:
+          type: string
+          maxLength: 200
+        receiver_city:
+          type: string
+          maxLength: 200
+        receiver_postal_code:
+          type: string
+          maxLength: 15
+        receiver_phone_number:
+          type: string
+          maxLength: 15
+        pickup_date:
+          type: string
+          format: date-time
+          nullable: true
+        estimated_delivery_date:
+          type: string
+          format: date-time
+          nullable: true
+        user:
+          type: integer
+      required:
+      - courier
+      - created_at
+      - height
+      - id
+      - length
+      - receiver_address
+      - receiver_city
+      - receiver_country
+      - receiver_phone_number
+      - receiver_postal_code
+      - sender_address
+      - sender_city
+      - sender_country
+      - sender_phone_number
+      - sender_postal_code
+      - shipment_method
+      - status
+      - tracking_id
       - updated_at
       - user
       - weight
