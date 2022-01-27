@@ -12,6 +12,7 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - ./.mysql:/var/lib/mysql
+      - ./init-database.sql:/docker-entrypoint-initdb.d/1.sql
     ports:
       - 3866:3386
     networks:
@@ -51,13 +52,14 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
 
   worker:
+    build: .
     image: backend-image
     container_name: zidship_worker
     volumes:
       - .:/app
     restart: on-failure
     command: >
-      sh -c "celery --app zidship worker --loglevel=INFO"
+      sh -c "watchmedo auto-restart -- celery --app zidship worker --loglevel=INFO"
     depends_on:
       - web
       - rabbit

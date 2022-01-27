@@ -110,7 +110,7 @@ WSGI_APPLICATION = 'zidship.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'USER': os.environ.get('MYSQL_USER'),
+        'USER': os.environ.get('MYSQL_USER', 'root'),
         'NAME': os.environ.get('MYSQL_DATABASE'),
         'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
         'HOST': 'db',
