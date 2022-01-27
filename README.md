@@ -21,8 +21,12 @@
 
 ## Documentation
 You can either 
-- Navigate it through django server at ```/api/schema/swagger-ui ```
+- Navigate it through django server at ```http://localhost:8000/api/schema/swagger-ui ```
 - Copy the yaml file content from ``` https://github.com/Hussein-ElAttar/zidship/blob/master/schema.yam1 ``` and paste it in the official swagger editor ```https://editor.swagger.lo/```
+
+## Postman collection
+```https://www.getpostman.com/collections/dbdbbfa6f8a81aba20f8```
+
 ## Running the project with docker: 
 - clone the repo ```git clone https://github.com/Hussein-ElAttar/zidship.git ```
 - cd into project root ```cd zidship```
@@ -31,5 +35,6 @@ You can either
 
 ## API Authentication 
 - Use the username & password from the ```.env.example``` file
-
+```http://localhost:8000/api/auth/token/```
+```username: admin, password:12345678```
 

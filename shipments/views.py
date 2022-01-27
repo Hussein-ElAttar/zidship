@@ -85,8 +85,7 @@ class ShipmentViewSet(viewsets.ModelViewSet):
     def track(self, request, *args, **kwargs):
         """Track Shipment."""
         instance = self.get_object()
-        shipment_gateway = FactoryShipmentGateway.get_shipment_gateway(
-            instance)
+        shipment_gateway = FactoryShipmentGateway.get_shipment_gateway(instance)
 
         locations = [loc.__dict__ for loc in shipment_gateway.track_shipment()]
 
